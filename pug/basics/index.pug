@@ -1,0 +1,197 @@
+mixin comment(commentData)
+    
+    //- structure the template
+    .comment
+        //- you can add conditionals in the mixin too
+        if commentData.postByAdmin
+            em (Posted by Admin)
+        .date=commentData.date
+        .author=commentData.author
+        .text=commentData.text
+
+doctype <!DOCTYPE html>
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport" content="width=device-width, initial-scale=1.0")
+        title Pug's tutorial!
+        //- add CSS
+        link(rel="stylesheet" href="style.css")
+
+        //- inline CSS
+        style.
+            p {
+                color: red;
+                text-decoration: underline;
+            }
+            .comment {
+                font-family: sans-serif;
+                line-height: 1.5;
+                padding: 10px;
+                border: 1px solid #555;
+                width: 250px;
+            }
+
+            .date {
+                font-size: 85%;
+            }
+
+            .author {
+                font-size: 110%;
+                font-weight: bold;
+            }
+
+            .text {
+                font-size: 100%;
+            }
+
+    body
+        h1 Welcome to PUG!
+        //- put . (dot) at the end if you need multiple line
+        p.
+            this is a paragraph tag
+            and this is a new line!
+        ul
+            li this is item1
+            li this is item2
+            li this is item3
+
+        //- ids
+        h1#pageTitle page title
+
+        //- classes
+        p.big-para.
+            Here is some more text for
+            my big paragraph
+
+        //- div without declaring (it's a default in pug)
+        .display-box
+        #myOnlyDiv
+
+        //- attributes
+        //- in data-js you can put the logic for generating the html value in place.
+        input(type="password" name="inpPwd" data-js=`${ 5 > 2 ? "OK" : "NOT OK!" }`)
+
+        //- define JS variable
+        - const myClasses = ["class1", "class2", "class3"]
+        //- append the array of class to the my-div
+        div.my-div(class=myClasses)
+
+        - const myStyles = {"color":"red", "background-color":"blue"}
+        div(style=myStyles)
+
+        //- other way to add the variable to tag using &
+        - const myAttributes = {"src":"myPhoto.png", "alt": "This is my photo"}
+        img&attributes(myAttributes)
+
+        //- to add or not to add the optional you can use the boolean condition
+        input(type="text" disabled)
+        input(type="text" disabled=false)
+
+        //- CSS inline
+        p(style="text-align: center; text-transform: uppercase;") This is inline CSS!
+
+        - const pStyle = {"text-align" : "center", "text-transform" : "uppercase"}
+        p(style=pStyle) define the CSS by JS variable
+
+        //- for each
+        h1 For/Each Loop
+        each n in [1,2,3,4,5]
+            //- this will print n 5 times
+            p n 
+
+        each n in [1,2,3,4,5]
+            //- this will print the value in array
+            p= n
+
+        //-enumerate (number, index start with 0)
+        each n,i in [50,2,3,4,5]
+            p= n + " - " + i
+
+        - const names = ["Dom", "Sophie", "Mark"]
+        each n,i in names
+            p= n + " - " + i
+
+        //- each and for is the same thing with different name
+        for n,i in names
+            p= n + " - " + i
+
+        //- boolean with for each
+        for n,i in []
+            p= n + " - " + i
+        else
+            strong No values are here!
+
+        //- conditionals
+        h2 My Web Application
+
+        - var user = { name: "Domenic", loggedIn: true, lastLogin: 5 }
+        if user.loggedIn
+            p
+                //- the | (pipe) is used to escape the following string
+                | Welcome back,
+                //- using the #{ } for specifying value in HTML element tag
+                strong  #{ user.name }
+        else if user.lastLogin < 10
+            p Your last login was #{user.lastLogin} minute ago
+            p
+                a(href="/login") Log in
+        else
+            a(href="/login") Log in
+
+
+        - var user = { name: "Domenic", loggedIn: false, lastLogin: 5 }
+        if user.loggedIn
+            p
+                //- the | (pipe) is used to escape the following string
+                | Welcome back,
+                //- using the #{ } for specifying value in HTML element tag
+                strong  #{ user.name }
+        else if user.lastLogin < 10
+            p Your last login was #{user.lastLogin} minutes ago
+            p
+                a(href="/login") Log in
+        else
+            a(href="/login") Log in
+
+        //- Case statement
+        //- using // (double blackslah) is a comment in html tag
+        // orderStatus => Pending || In_transit || Completed
+        //- status could be both string and number
+        - const orderStatus = "Null"
+
+        case orderStatus
+            when "Pending"
+                // do stuff here
+                p Your order has been placed and will be sent shortly.
+            when "In_transit"
+                p Your order has been in transit.
+            when "Completed"
+                p Your order has been received.
+            //- if no value matching then using default option otherwise it's blanked.
+            default
+                p Please check your orderStatus
+
+        //- Include how to add the header and footer 
+        include includes/nav
+
+        //- mixins
+        //- reuseable chuck of code (parse value from DB and pug will render it)
+        .comment
+            .date 04-02-2019
+            .author Pat
+            .text Hey mate!
+
+
+        //- after defining the mixin in the top then we will use it here
+        - const c = { date: "01-01-2020", author: "Colt", text: "my name is colt" }
+        //- style is also apply to this structure based on their classes as well
+        +comment(c)
+
+        //- this will ckecl the conditional logic and add some text based on the mixin object.
+        - const c1 = { postByAdmin: true, date: "30-05-2020", author: "PS", text: "almost the end of MAY" }
+        +comment(c1)
+        
+
+
+
